@@ -5,8 +5,6 @@ on: [push]
 jobs:
   build:
 
-    needs: build
-
     steps:
       - uses: actions/checkout@v1
       - name: npm install and build webpack
@@ -19,11 +17,7 @@ jobs:
           path: public/
 
   test:
-    - uses: actions/download-artifact@master
-      with:
-        name: webpack artifacts
-        path: public
-    - name: npm install, and test
+    needs: build
     runs-on: ubuntu-latest
 
     strategy:
@@ -33,6 +27,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - uses: actions/download-artifact@master
+      with:
+        name: webpack artifacts
+        path: public
+    - name: npm install, and test
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
